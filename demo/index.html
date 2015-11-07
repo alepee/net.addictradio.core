@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+</head>
+<body ng-app="ar.player" style="font-family: sans-serif;">
+
+  <div class="wrapper" ng-controller="AppController as ctrl">
+    <div ng-if="ctrl.channels.promise.$$state.status == 0" style="margin-top: 10px; background-color: lightblue; padding: 10px">
+      Loading Channels!
+    </div>
+
+    <h1>{{ ctrl.audioPlayer.getChannel().name || 'Select a channel' }}</h1>
+    <div ng-repeat="channel in ctrl.channels.list()">
+      <div style="float: left">
+        <img ng-src="{{channel.meta().cover() || 'http://placehold.it/50'}}" style="width: 50px; margin-right: 10px;" ar-play channel="channel">
+      </div>
+      <div>
+        <strong>{{ channel.name }}</strong><br>
+        <span>{{ channel.meta().fullName() }}</span><br>
+        <button ar-play channel="channel">Play {{ channel.name }}</button>
+      </div>
+      <hr>
+    </div>
+    <div style="margin-top: 10px; background-color: lightgrey; padding: 10px;">
+      <button ar-play ng-disabled="!ctrl.audioPlayer.getChannel() || ctrl.audioPlayer.isPlaying">Play</button>
+      <button ar-stop ng-disabled="!ctrl.audioPlayer.isPlaying">Stop</button>
+      <ar-volume></ar-volume>
+    </div>
+
+    <div style="margin-top: 10px; background-color: lightgreen; padding: 10px">
+      <span ng-if="ctrl.audioPlayer.isLoading">Loading</span>
+      <span ng-if="ctrl.audioPlayer.isPlaying">Playing</span>
+      <span ng-if="!ctrl.audioPlayer.isPlaying">Stopped</span>
+    </div>
+  </div>
+
+  <script type="text/javascript" src="bower_components/angular/angular.min.js"></script>
+  <script type="text/javascript" src="bower_components/socket.io-client/socket.io.js"></script>
+  <script type="text/javascript" src="dist/core.js"></script>
+  <script type="text/javascript" src="app.js"></script>
+</body>
+</html>

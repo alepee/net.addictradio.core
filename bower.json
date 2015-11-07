@@ -1,0 +1,22 @@
+{
+  "name": "net.addictradio.core",
+  "authors": [
+    "Antoine Lépée <alepee@gmail.com>"
+  ],
+  "description": "Addict Radio audio player core module",
+  "main": "core.js",
+  "moduleType": [],
+  "homepage": "http://www.addictradio.net",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.4.7",
+    "socket.io-client": "~1.3.7"
+  }
+}
