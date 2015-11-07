@@ -1,6 +1,30 @@
 AR.Core
 =======
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [Installation](#installation)
+- [API](#api)
+  - [Provider](#provider)
+    - [arSettingsProvider](#arsettingsprovider)
+  - [Services](#services)
+    - [arAudioPlayer](#araudioplayer)
+    - [arChannel](#archannel)
+    - [arMeta](#armeta)
+  - [Directives](#directives)
+    - [arPlay](#arplay)
+    - [arStop](#arstop)
+    - [arVolume](#arvolume)
+  - [Custom Objects](#custom-objects)
+    - [AudioPlayer](#audioplayer)
+    - [Channel](#channel)
+    - [Meta](#meta)
+- [Contribute](#contribute)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Installation
 
 ```
