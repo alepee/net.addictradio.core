@@ -13,7 +13,7 @@
     <h1>{{ ctrl.audioPlayer.getChannel().name || 'Select a channel' }}</h1>
     <div ng-repeat="channel in ctrl.channels.list()">
       <div style="float: left">
-        <img ng-src="{{channel.meta().cover() || 'http://placehold.it/50'}}" style="width: 50px; margin-right: 10px;" ar-play channel="channel">
+        <img ng-src="{{channel.meta().cover.source || 'http://placehold.it/50'}}" style="width: 50px; margin-right: 10px;" ar-play channel="channel">
       </div>
       <div>
         <strong>{{ channel.name }}</strong><br>
@@ -33,6 +33,11 @@
       <span ng-if="ctrl.audioPlayer.isPlaying">Playing</span>
       <span ng-if="!ctrl.audioPlayer.isPlaying">Stopped</span>
     </div>
+    <hr>
+
+    <img ng-src="{{ ctrl.audioPlayer.getCoverData('background') }}">
+    <div>{{ ctrl.audioPlayer.getCoverLightness() }}</div>
+
   </div>
 
   <script type="text/javascript" src="bower_components/angular/angular.min.js"></script>

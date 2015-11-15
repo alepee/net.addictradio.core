@@ -45,12 +45,22 @@ It defines configuration for ar.core and must be used on angular bootstrap
 angular.module('myApp', [ar.core])
 .config(function(arSettingsProvider) {
   arSettingsProvider.setOptions({
-    playerName: 'Website', // (mandatory) define playerName for analityc tools (adswizz)
-    protocol: 'http', // optional
-    port: '8080', // optional
-    socketPort: '9277', // optional
-    host: 'dev.addictradio.net', // optional
-    path: '/api/1' // optional
+    playerName: 'Website', // (mandatory) define playerName for analityc tools (e.g.: audiometrix)
+    autoLoadChannel: 'rock', // a channel tag or true (random)
+    autoPlay: true,
+    coverPreload: {
+      background: {
+        width: 500, // does not support crop yet
+        height: 500
+      }
+    }
+    server: {
+        protocol: 'http', // optional
+        port: '8080', // optional
+        socketPort: '9277', // optional
+        host: 'dev.addictradio.net', // optional
+        path: '/api/1' // optional
+    }
   });
 });
 ```
@@ -122,6 +132,9 @@ Defined in arAudioPlayer.
 | setVolume(`Number`/`String`) | a number (or parsable string) between 0 and 100 | set the audio volume |
 | getChannel() | - | return the currently selected `Channel` |
 | setChannel(`Channel`) | a Channel object as returned by `arChannel.list()` or `arChannel.find(channelTag)` | set a new channel as the current one. |
+| getMeta() | - | return the current channel `Meta` |
+| getCoverData(`String`) | a preloaded CoverExport id (check [arSettingsProvider](#arSettingsProvider)) | return a data URI (formatted in base64) |
+| getCoverLightness() | - | return a value based on Cover image lightness |
 | isLoading | - | is `true` if stream is loading or `false` |
 | isPlaying | - | is `true` if player actually play something (e.g.: computer speakers are actually louding something) or `false` |
 
@@ -147,8 +160,9 @@ Defined in arMeta.
 | req_artist | - | original request data (should not be used) |
 | req_title | - | original request data (should not be used) |
 | song | - | a song object (check your network panel to get its structure) |
-| cover() | - | get the cover url for this album |
-| fullname(separator) | a string to separate song title and artist name | get a formatted title + artist name |
+| promise | - | an Angular promise resolved as soon as all cover images has been loadded |
+| cover | - | get the cover url for this album |
+| fullname(`String`) | a separator to format song title and artist name | get a formatted title + artist name |
 
 ## Contribute
 

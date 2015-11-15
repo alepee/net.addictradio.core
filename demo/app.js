@@ -5,7 +5,16 @@
 
   app.config(function(arSettingsProvider) {
     arSettingsProvider.setOptions({
-      playerName: 'Website'
+      playerName: 'Website',
+      autoLoadChannel: true,
+      autoPlay: true,
+      coverPreload: {
+        background: {
+          width: 500,
+          height: 500,
+          blurRadius: 70
+        }
+      }
     });
   });
 

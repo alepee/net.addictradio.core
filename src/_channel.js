@@ -48,7 +48,7 @@
       find: function(tag) {
         return _channels.filter(function(channel) {
           return channel.tag === tag;
-        });
+        })[0];
       },
       promise: promise
     };

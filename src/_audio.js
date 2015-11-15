@@ -2,7 +2,7 @@
   'use strict';
   var core = angular.module('ar.core');
 
-  core.factory('arAudioPlayer', function($interval, $timeout) {
+  core.factory('arAudioPlayer', function($interval, $timeout, arSettings, arChannel) {
     function AudioPlayer() {
       this.audio = new Audio();
 
@@ -11,7 +11,22 @@
       this._watchPromise = null;
 
       var self = this;
-      angular.element(self.audio).on('timeupdate', function(e) {
+
+      if (arSettings.autoLoadChannel) {
+        arChannel.promise.then(function() {
+          var channel = arChannel.find(arSettings.autoLoadChannel);
+          if (!channel) {
+            var size = arChannel.list().length;
+            var index = Math.floor(Math.random() * (size + 1));
+            channel = arChannel.list()[index];
+          }
+          self.setChannel(channel);
+
+          if (arSettings.autoPlay) self.play();
+        });
+      }
+
+      angular.element(this.audio).on('timeupdate', function(e) {
         if (self._lastChunk !== 0) self._lastChunk = e.timeStamp;
       });
 
@@ -64,6 +79,21 @@
     AudioPlayer.prototype.setChannel = function(channel) {
       this._currentChannel = channel;
       return this;
+    };
+
+    AudioPlayer.prototype.getMeta = function() {
+      if (this.getChannel()) return this.getChannel().meta();
+    };
+
+    AudioPlayer.prototype.getCoverData = function(id) {
+      if (this.getMeta() && this.getMeta().cover) {
+        return this.getMeta().cover.base64(id);
+      }
+    };
+
+    AudioPlayer.prototype.getCoverLightness = function() {
+      if (this.getMeta() && this.getMeta().cover)
+        return this.getMeta().cover.lightness;
     };
 
     AudioPlayer.prototype._watchLoading = function(callback) {

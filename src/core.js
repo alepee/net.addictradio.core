@@ -4,12 +4,26 @@
 
   core.provider('arSettings', function() {
     var settings = {
-      protocol: 'http',
-      port: '8080',
-      socketPort: '9277',
-      host: 'dev.addictradio.net',
-      path: '/api/1',
-      playerName: null
+      server: {
+        protocol: 'http',
+        port: '8080',
+        socketPort: '9277',
+        host: 'dev.addictradio.net',
+        path: '/api/1'
+      },
+      playerName: null,
+      coverPreload: {
+        background: {
+          width: 500,
+          height: 500,
+          blurRadius: 70
+        },
+        thumb: {
+          width: 300,
+          height: 300,
+          blurRadius: 0
+        }
+      }
     };
 
     this.setOptions = function(options) {
@@ -23,18 +37,18 @@
 
       settings.endpoint = (function() {
         return (
-          settings.protocol + '://' +
-          settings.host +
-          (settings.port ? ':' + settings.port : ':80') +
-          settings.path
+          settings.server.protocol + '://' +
+          settings.server.host +
+          (settings.server.port ? ':' + settings.server.port : ':80') +
+          settings.server.path
           );
       })();
 
       settings.socket = (function() {
         return (
-          settings.protocol + '://' +
-          settings.host +
-          ':' + settings.socketPort
+          settings.server.protocol + '://' +
+          settings.server.host +
+          ':' + settings.server.socketPort
           );
       })();
 

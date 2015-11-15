@@ -2,37 +2,42 @@
   'use strict';
   var core = angular.module('ar.core');
 
-  function Meta(data) {
-    this.played_on = data.played_on;
-    this.played_at = data.played_at;
-    this.req_artist = data.req_artist;
-    this.req_title = data.req_title;
-    this.song = data.song;
+  core.factory('arMeta', function($http, $q, arSettings, arSocket, arCover) {
+    var _metas = {};
 
-    this._clean();
-  }
+    function Meta(data) {
+      this.played_on = data.played_on;
+      this.played_at = data.played_at;
+      this.req_artist = data.req_artist;
+      this.req_title = data.req_title;
+      this.song = data.song;
+      this.promise = $q.defer();
 
-  Meta.prototype.cover = function() {
-    return (this.song.album ? this.song.album.cover_url : void 0);
-  };
+      if (!this.song) {
+        this.clean();
+        this.promise.resolve();
+      } else if (this.song.album && this.song.album.cover_url) {
+        this.cover = new arCover(this.song.album.cover_url);
 
-  Meta.prototype.fullName = function(separator) {
-    return this.song.name + (separator || ' — ') + this.song.artist.name;
-  };
+        var self = this;
+        this.cover.promise.then(function() {
+          self.promise.resolve();
+        });
+      }
+    }
 
-  Meta.prototype._clean = function() {
-    if (this.song == null) {
+    Meta.prototype.fullName = function(separator) {
+      return this.song.name + (separator || ' — ') + this.song.artist.name;
+    };
+
+    Meta.prototype.clean = function() {
       this.song = {
         name: this.req_title,
         artist: {
           name: this.req_artist
         }
       };
-    }
-  };
-
-  core.factory('arMeta', function($http, $q, arSettings, arSocket) {
-    var _metas = {};
+    };
 
     var promise = $http.get(arSettings.endpoint + '/plays', {});
     promise.then(function(res) {
@@ -47,17 +52,7 @@
       var cover, ref;
       var deferred = $q.defer();
 
-      if (cover = (ref = data.song) != null ? ref.album.cover_url : void 0) {
-        var image = new Image();
-        image.src = cover;
-        image.onload = deferred.resolve;
-      } else {
-        deferred.resolve();
-      }
-
-      deferred.promise.then(function() {
-        _metas[data.played_on] = new Meta(data);
-      });
+      _metas[data.played_on] = new Meta(data);
     });
 
     return {
