@@ -22,7 +22,7 @@
         this.cover = new arCover(this.song.album.cover_url);
 
         this.cover.promise.then((function() {
-          this.promise.resolve();
+          deferred.resolve();
         }).bind(this));
       }
     }
@@ -54,7 +54,6 @@
       var deferred = $q.defer();
 
       var meta = new Meta(data);
-
       meta.promise.then(function() {
         _metas[data.played_on] = meta;
       });
