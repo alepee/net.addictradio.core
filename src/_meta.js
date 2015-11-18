@@ -19,10 +19,9 @@
       } else if (this.song.album && this.song.album.cover_url) {
         this.cover = new arCover(this.song.album.cover_url);
 
-        var self = this;
-        this.cover.promise.then(function() {
-          self.promise.resolve();
-        });
+        this.cover.promise.then((function() {
+          this.promise.resolve();
+        }).bind(this));
       }
     }
 

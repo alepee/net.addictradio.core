@@ -14,20 +14,19 @@
 
       this._exports = {};
 
-      var self = this;
-      this.image.onload = function() {
-        self.getLightness();
+      this.image.onload = (function() {
+        this.getLightness();
         if (arSettings.coverPreload) {
           var keys = Object.keys(arSettings.coverPreload);
           for (var i = keys.length - 1; i >= 0; i--) {
             var key = keys[i];
             var opt = arSettings.coverPreload[key];
-            self.export(key, opt.width, opt.height, opt.blurRadius);
+            this.export(key, opt.width, opt.height, opt.blurRadius);
           }
         }
 
-        deferred.resolve(self);
-      };
+        deferred.resolve(this);
+      }).bind(this);
     }
 
     Cover.prototype.base64 = function(id) {

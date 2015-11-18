@@ -72,31 +72,29 @@
     this._currentChannel = null;
     this._watchPromise = null;
 
-    var self = this;
-
     if (arSettings.autoLoadChannel) {
-      arChannel.promise.then(function() {
+      arChannel.promise.then((function() {
         var channel = arChannel.find(arSettings.autoLoadChannel);
         if (!channel) {
           var index = Math.floor(Math.random() * arChannel.list().length);
           channel = arChannel.list()[index];
         }
-        self.setChannel(channel);
+        this.setChannel(channel);
 
-        if (arSettings.autoPlay) self.play();
-      });
+        if (arSettings.autoPlay) this.play();
+      }).bind(this));
     }
 
-    angular.element(this.audio).on('timeupdate', function(e) {
-      if (self._lastChunk !== 0) self._lastChunk = e.timeStamp;
-    });
+    angular.element(this.audio).on('timeupdate', (function(e) {
+      if (this._lastChunk !== 0) this._lastChunk = e.timeStamp;
+    }).bind(this));
 
-    $interval(function() {
-      self.isPlaying = (Date.now() - self._lastChunk) < 2000;
-      self.isLoading = self._lastChunk === Infinity;
+    $interval((function() {
+      this.isPlaying = (Date.now() - this._lastChunk) < 2000;
+      this.isLoading = this._lastChunk === Infinity;
 
-      if (self._lastChunk !== 0 && !self.isPlaying) self._restart();
-    }, 250);
+      if (this._lastChunk !== 0 && !this.isPlaying) this._restart();
+    }).bind(this), 250);
 
     this.play = function() {
       this._loadSource();
@@ -146,9 +144,8 @@
     };
 
     this.getCoverData = function(id) {
-      if (this.getMeta() && this.getMeta().cover) {
+      if (this.getMeta() && this.getMeta().cover)
         return this.getMeta().cover.base64(id);
-      }
     };
 
     this.getCoverLightness = function() {
@@ -167,15 +164,14 @@
     this._watchLoading = function(callback) {
       if (this._watchPromise) $timeout.cancel(this._watchPromise);
 
-      var self = this;
-      self._watchPromise = $timeout(function() {
-        if (self.isLoading) {
-          self.stop();
-          self.isLoading = false;
-          self._restart();
-          self._watchPromise = null;
+      this._watchPromise = $timeout((function() {
+        if (this.isLoading) {
+          this.stop();
+          this.isLoading = false;
+          this._restart();
+          this._watchPromise = null;
         }
-      }, 5000);
+      }).bind(this), 5000);
     };
 
     this._restart = function() {
@@ -322,20 +318,19 @@
 
       this._exports = {};
 
-      var self = this;
-      this.image.onload = function() {
-        self.getLightness();
+      this.image.onload = (function() {
+        this.getLightness();
         if (arSettings.coverPreload) {
           var keys = Object.keys(arSettings.coverPreload);
           for (var i = keys.length - 1; i >= 0; i--) {
             var key = keys[i];
             var opt = arSettings.coverPreload[key];
-            self.export(key, opt.width, opt.height, opt.blurRadius);
+            this.export(key, opt.width, opt.height, opt.blurRadius);
           }
         }
 
-        deferred.resolve(self);
-      };
+        deferred.resolve(this);
+      }).bind(this);
     }
 
     Cover.prototype.base64 = function(id) {
@@ -671,10 +666,9 @@
       } else if (this.song.album && this.song.album.cover_url) {
         this.cover = new arCover(this.song.album.cover_url);
 
-        var self = this;
-        this.cover.promise.then(function() {
-          self.promise.resolve();
-        });
+        this.cover.promise.then((function() {
+          this.promise.resolve();
+        }).bind(this));
       }
     }
 
@@ -721,27 +715,26 @@
   'use strict';
   var core = angular.module('ar.core');
 
-  core.factory('arSocket', ["$rootScope", "arSettings", function($rootScope, arSettings) {
+  core.service('arSocket', ["$rootScope", "arSettings", function($rootScope, arSettings) {
     var socket = io.connect(arSettings.socket);
-    return {
-      on: function(eventName, callback) {
-        socket.on(eventName, function() {
-          var args = arguments;
-          $rootScope.$apply(function() {
+
+    this.on = function(eventName, callback) {
+      socket.on(eventName, function() {
+        var args = arguments;
+        $rootScope.$apply(function() {
+          callback.apply(socket, args);
+        });
+      });
+    };
+    this.emit = function (eventName, data, callback) {
+      socket.emit(eventName, data, function () {
+        var args = arguments;
+        $rootScope.$apply(function () {
+          if (callback) {
             callback.apply(socket, args);
-          });
+          }
         });
-      },
-      emit: function (eventName, data, callback) {
-        socket.emit(eventName, data, function () {
-          var args = arguments;
-          $rootScope.$apply(function () {
-            if (callback) {
-              callback.apply(socket, args);
-            }
-          });
-        });
-      }
+      });
     };
   }]);
 }).call(this);

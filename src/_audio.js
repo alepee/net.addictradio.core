@@ -12,31 +12,29 @@
     this._currentChannel = null;
     this._watchPromise = null;
 
-    var self = this;
-
     if (arSettings.autoLoadChannel) {
-      arChannel.promise.then(function() {
+      arChannel.promise.then((function() {
         var channel = arChannel.find(arSettings.autoLoadChannel);
         if (!channel) {
           var index = Math.floor(Math.random() * arChannel.list().length);
           channel = arChannel.list()[index];
         }
-        self.setChannel(channel);
+        this.setChannel(channel);
 
-        if (arSettings.autoPlay) self.play();
-      });
+        if (arSettings.autoPlay) this.play();
+      }).bind(this));
     }
 
-    angular.element(this.audio).on('timeupdate', function(e) {
-      if (self._lastChunk !== 0) self._lastChunk = e.timeStamp;
-    });
+    angular.element(this.audio).on('timeupdate', (function(e) {
+      if (this._lastChunk !== 0) this._lastChunk = e.timeStamp;
+    }).bind(this));
 
-    $interval(function() {
-      self.isPlaying = (Date.now() - self._lastChunk) < 2000;
-      self.isLoading = self._lastChunk === Infinity;
+    $interval((function() {
+      this.isPlaying = (Date.now() - this._lastChunk) < 2000;
+      this.isLoading = this._lastChunk === Infinity;
 
-      if (self._lastChunk !== 0 && !self.isPlaying) self._restart();
-    }, 250);
+      if (this._lastChunk !== 0 && !this.isPlaying) this._restart();
+    }).bind(this), 250);
 
     this.play = function() {
       this._loadSource();
@@ -86,9 +84,8 @@
     };
 
     this.getCoverData = function(id) {
-      if (this.getMeta() && this.getMeta().cover) {
+      if (this.getMeta() && this.getMeta().cover)
         return this.getMeta().cover.base64(id);
-      }
     };
 
     this.getCoverLightness = function() {
@@ -107,15 +104,14 @@
     this._watchLoading = function(callback) {
       if (this._watchPromise) $timeout.cancel(this._watchPromise);
 
-      var self = this;
-      self._watchPromise = $timeout(function() {
-        if (self.isLoading) {
-          self.stop();
-          self.isLoading = false;
-          self._restart();
-          self._watchPromise = null;
+      this._watchPromise = $timeout((function() {
+        if (this.isLoading) {
+          this.stop();
+          this.isLoading = false;
+          this._restart();
+          this._watchPromise = null;
         }
-      }, 5000);
+      }).bind(this), 5000);
     };
 
     this._restart = function() {
