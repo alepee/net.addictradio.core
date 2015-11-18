@@ -10,8 +10,8 @@ gulp.task('default', ['compile', 'connect', 'watch']);
 gulp.task('compile', function() {
   gulp.src(['src/core.js', 'src/_*.js'])
   .pipe(concat('core.js'))
-  .pipe(gulp.dest('dist'))
   .pipe(annotate())
+  .pipe(gulp.dest('dist'))
   .pipe(uglify())
   .pipe(rename('core.min.js'))
   .pipe(gulp.dest('dist'));

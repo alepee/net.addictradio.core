@@ -2,43 +2,43 @@
   'use strict';
   var core = angular.module('ar.core');
 
-  core.factory('arAudioPlayer', function($interval, $timeout, arSettings, arChannel) {
-    function AudioPlayer() {
-      this.audio = new Audio();
+  core.service('arAudioPlayer', function(
+    $interval, $timeout, arSettings, arChannel
+    ) {
 
-      this._lastChunk = 0;
-      this._currentChannel = null;
-      this._watchPromise = null;
+    this.audio = new Audio();
 
-      var self = this;
+    this._lastChunk = 0;
+    this._currentChannel = null;
+    this._watchPromise = null;
 
-      if (arSettings.autoLoadChannel) {
-        arChannel.promise.then(function() {
-          var channel = arChannel.find(arSettings.autoLoadChannel);
-          if (!channel) {
-            var size = arChannel.list().length;
-            var index = Math.floor(Math.random() * (size + 1));
-            channel = arChannel.list()[index];
-          }
-          self.setChannel(channel);
+    var self = this;
 
-          if (arSettings.autoPlay) self.play();
-        });
-      }
+    if (arSettings.autoLoadChannel) {
+      arChannel.promise.then(function() {
+        var channel = arChannel.find(arSettings.autoLoadChannel);
+        if (!channel) {
+          var index = Math.floor(Math.random() * arChannel.list().length);
+          channel = arChannel.list()[index];
+        }
+        self.setChannel(channel);
 
-      angular.element(this.audio).on('timeupdate', function(e) {
-        if (self._lastChunk !== 0) self._lastChunk = e.timeStamp;
+        if (arSettings.autoPlay) self.play();
       });
-
-      $interval(function() {
-        self.isPlaying = (Date.now() - self._lastChunk) < 2000;
-        self.isLoading = self._lastChunk === Infinity;
-
-        if (self._lastChunk !== 0 && !self.isPlaying) self._restart();
-      }, 250);
     }
 
-    AudioPlayer.prototype.play = function() {
+    angular.element(this.audio).on('timeupdate', function(e) {
+      if (self._lastChunk !== 0) self._lastChunk = e.timeStamp;
+    });
+
+    $interval(function() {
+      self.isPlaying = (Date.now() - self._lastChunk) < 2000;
+      self.isLoading = self._lastChunk === Infinity;
+
+      if (self._lastChunk !== 0 && !self.isPlaying) self._restart();
+    }, 250);
+
+    this.play = function() {
       this._loadSource();
       this.audio.play();
       this._lastChunk = Infinity;
@@ -46,18 +46,18 @@
       return this;
     };
 
-    AudioPlayer.prototype.stop = function() {
+    this.stop = function() {
       this.audio.pause();
       this._unloadSource();
       this._lastChunk = 0;
       return this;
     };
 
-    AudioPlayer.prototype.getVolume = function() {
+    this.getVolume = function() {
       return parseInt(this.audio.volume * 100);
     };
 
-    AudioPlayer.prototype.setVolume = function(value) {
+    this.setVolume = function(value) {
       value = parseInt(value);
       if (typeof value === "number" &&
          isFinite(value) &&
@@ -72,31 +72,39 @@
       return this;
     };
 
-    AudioPlayer.prototype.getChannel = function() {
+    this.getChannel = function() {
       return this._currentChannel;
     };
 
-    AudioPlayer.prototype.setChannel = function(channel) {
+    this.setChannel = function(channel) {
       this._currentChannel = channel;
       return this;
     };
 
-    AudioPlayer.prototype.getMeta = function() {
+    this.getMeta = function() {
       if (this.getChannel()) return this.getChannel().meta();
     };
 
-    AudioPlayer.prototype.getCoverData = function(id) {
+    this.getCoverData = function(id) {
       if (this.getMeta() && this.getMeta().cover) {
         return this.getMeta().cover.base64(id);
       }
     };
 
-    AudioPlayer.prototype.getCoverLightness = function() {
+    this.getCoverLightness = function() {
       if (this.getMeta() && this.getMeta().cover)
         return this.getMeta().cover.lightness;
     };
 
-    AudioPlayer.prototype._watchLoading = function(callback) {
+    this.getCoverLightnessWord = function() {
+      var lightnessValue = this.getCoverLightness();
+      if (lightnessValue)
+        return this.getCoverLightness() < 128 ? 'dark' : 'light';
+      else
+        return undefined;
+    };
+
+    this._watchLoading = function(callback) {
       if (this._watchPromise) $timeout.cancel(this._watchPromise);
 
       var self = this;
@@ -110,11 +118,11 @@
       }, 5000);
     };
 
-    AudioPlayer.prototype._restart = function() {
+    this._restart = function() {
       if (!this.isLoading) this.play();
     };
 
-    AudioPlayer.prototype._loadSource = function() {
+    this._loadSource = function() {
       this._unloadSource();
       var sources = (this._currentChannel ? this._currentChannel.sources() : void 0);
       if (!sources) throw new Error('_currentChannel is undefined. Use setChannel method.');
@@ -130,14 +138,12 @@
       return this;
     };
 
-    AudioPlayer.prototype._unloadSource = function() {
+    this._unloadSource = function() {
       while (this.audio.firstChild) {
         this.audio.removeChild(this.audio.firstChild);
       }
       return this;
     };
-
-    return new AudioPlayer();
   });
 
   core.directive('arPlay', function(arAudioPlayer) {

@@ -35,8 +35,12 @@
     </div>
     <hr>
 
+    <div>
+      <span>{{ ctrl.audioPlayer.getCoverLightness() }}</span>
+      <span>({{ ctrl.audioPlayer.getCoverLightnessWord() }})</span>
+    </div>
+
     <img ng-src="{{ ctrl.audioPlayer.getCoverData('background') }}">
-    <div>{{ ctrl.audioPlayer.getCoverLightness() }}</div>
 
   </div>
 

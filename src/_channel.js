@@ -33,6 +33,7 @@
     };
 
     var promise = $http.get(arSettings.endpoint + '/channels', {});
+
     promise.then(function(res) {
       for (var i = res.data.response.length - 1; i >= 0; i--) {
         _channels.push(new Channel(res.data.response[i]));
@@ -42,6 +43,7 @@
     });
 
     return {
+      promise: promise,
       list: function() {
         return _channels;
       },
@@ -50,7 +52,6 @@
           return channel.tag === tag;
         })[0];
       },
-      promise: promise
     };
   });
 
