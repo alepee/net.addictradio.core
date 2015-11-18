@@ -133,7 +133,7 @@ Defined in arAudioPlayer.
 | getChannel() | - | return the currently selected `Channel` |
 | setChannel(`Channel`) | a Channel object as returned by `arChannel.list()` or `arChannel.find(channelTag)` | set a new channel as the current one. |
 | getMeta() | - | return the current channel `Meta` |
-| getCoverData(`String`) | a preloaded CoverExport id (check [arSettingsProvider](#arSettingsProvider)) | return a data URI (formatted in base64) |
+| getCover(`String`) | a preloaded CoverExport id (check [arSettingsProvider](#arSettingsProvider)) (optional) | return a data URI (formatted in base64) or cover source URL if no ID is specified |
 | getCoverLightness() | - | return a value based on Cover image lightness |
 | isLoading | - | is `true` if stream is loading or `false` |
 | isPlaying | - | is `true` if player actually play something (e.g.: computer speakers are actually louding something) or `false` |

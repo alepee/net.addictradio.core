@@ -21,6 +21,9 @@
   app.controller('AppController', function(arChannel, arAudioPlayer) {
     this.channels = arChannel;
     this.audioPlayer = arAudioPlayer;
+
+    this.getCover = arAudioPlayer.getCover.bind(arAudioPlayer);
+    this.getTheme = arAudioPlayer.getTheme.bind(arAudioPlayer);
   });
 
 }).call(this);

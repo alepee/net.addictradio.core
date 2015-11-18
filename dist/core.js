@@ -143,9 +143,11 @@
       if (this.getChannel()) return this.getChannel().meta();
     };
 
-    this.getCoverData = function(id) {
-      if (this.getMeta() && this.getMeta().cover)
-        return this.getMeta().cover.base64(id);
+    this.getCover = function(id) {
+      if (this.getMeta() && this.getMeta().cover) {
+        var cover = this.getMeta().cover;
+        return id ? cover.base64(id) : cover.source;
+      }
     };
 
     this.getCoverLightness = function() {
@@ -157,8 +159,11 @@
       var lightnessValue = this.getCoverLightness();
       if (lightnessValue)
         return this.getCoverLightness() < 128 ? 'dark' : 'light';
-      else
-        return undefined;
+    };
+
+    this.getTheme = function() {
+      if (this.getChannel())
+        return this.getChannel().theme;
     };
 
     this._watchLoading = function(callback) {

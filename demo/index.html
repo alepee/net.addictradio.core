@@ -40,7 +40,7 @@
       <span>({{ ctrl.audioPlayer.getCoverLightnessWord() }})</span>
     </div>
 
-    <div style="width: 500px; height: 500px; background-image: url({{ctrl.audioPlayer.getCoverData('background')}})"></div>
+    <div style="width: 500px; height: 500px; background-color: {{ ctrl.getTheme() }}; background-image: url({{ctrl.getCover('background')}})"></div>
 
   </div>
 
