@@ -669,7 +669,7 @@
 
       if (!this.song) {
         this.clean();
-        this.promise.resolve();
+        deferred.resolve();
       } else if (this.song.album && this.song.album.cover_url) {
         this.cover = new arCover(this.song.album.cover_url);
 
