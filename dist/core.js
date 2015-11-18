@@ -658,12 +658,14 @@
     var _metas = {};
 
     function Meta(data) {
+      var deferred = $q.defer();
+
       this.played_on = data.played_on;
       this.played_at = data.played_at;
       this.req_artist = data.req_artist;
       this.req_title = data.req_title;
       this.song = data.song;
-      this.promise = $q.defer();
+      this.promise = deferred.promise;
 
       if (!this.song) {
         this.clean();
@@ -703,7 +705,11 @@
       var cover, ref;
       var deferred = $q.defer();
 
-      _metas[data.played_on] = new Meta(data);
+      var meta = new Meta(data);
+
+      meta.promise.then(function() {
+        _metas[data.played_on] = meta;
+      });
     });
 
     return {
