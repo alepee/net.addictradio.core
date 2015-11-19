@@ -24,6 +24,8 @@
 
     this.getCover = arAudioPlayer.getCover.bind(arAudioPlayer);
     this.getTheme = arAudioPlayer.getTheme.bind(arAudioPlayer);
+
+    this.channelsReload = arChannel.reload;
   });
 
 }).call(this);

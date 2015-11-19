@@ -32,18 +32,10 @@
       return arMeta.find(this.tag);
     };
 
-    var promise = $http.get(arSettings.endpoint + '/channels', {});
-
-    promise.then(function(res) {
-      for (var i = res.data.response.length - 1; i >= 0; i--) {
-        _channels.push(new Channel(res.data.response[i]));
-      }
-    }, function(error) {
-      console.error(error);
-    });
-
-    return {
-      promise: promise,
+    var api = {
+      reload: function() {
+        callServer(true);
+      },
       list: function() {
         return _channels;
       },
@@ -51,8 +43,23 @@
         return _channels.filter(function(channel) {
           return channel.tag === tag;
         })[0];
-      },
+      }
     };
+
+    var callServer = function(clear) {
+      api.promise = $http.get(arSettings.endpoint + '/channels', {});
+      api.promise.then(function(res) {
+        if (clear) _channels = [];
+        for (var i = res.data.response.length - 1; i >= 0; i--) {
+          _channels.push(new Channel(res.data.response[i]));
+        }
+      }, function(error) {
+        console.error(error);
+      });
+    };
+
+    callServer();
+    return api;
   });
 
 

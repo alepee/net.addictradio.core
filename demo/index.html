@@ -32,7 +32,13 @@
       <span ng-if="ctrl.audioPlayer.isLoading">Loading</span>
       <span ng-if="ctrl.audioPlayer.isPlaying">Playing</span>
       <span ng-if="!ctrl.audioPlayer.isPlaying">Stopped</span>
+      —
+      <span ng-bind="ctrl.channels.promise.$$state.status"></span>
+
+      <button style="float: right" ng-click="ctrl.channelsReload()">Reload</button>
+
     </div>
+
     <hr>
 
     <div>

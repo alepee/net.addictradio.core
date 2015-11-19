@@ -40,14 +40,28 @@
       };
     };
 
-    var promise = $http.get(arSettings.endpoint + '/plays', {});
-    promise.then(function(res) {
-      for (var i = res.data.response.length - 1; i >= 0; i--) {
-        _metas[res.data.response[i].played_on] = new Meta(res.data.response[i]);
+    var api = {
+      find: function(tag) {
+        return _metas[tag];
+      },
+      reload: function() {
+        callServer();
       }
-    }, function(error) {
-      console.error(error);
-    });
+    };
+
+    var callServer = function() {
+      api.promise = $http.get(arSettings.endpoint + '/plays', {});
+      api.promise.then(function(res) {
+        for (var i = res.data.response.length - 1; i >= 0; i--) {
+          var data = res.data;
+          _metas[data.response[i].played_on] = new Meta(data.response[i]);
+        }
+      }, function(error) {
+        console.error(error);
+      });
+    };
+
+    callServer();
 
     arSocket.on('play:update', function(data) {
       var cover, ref;
@@ -59,12 +73,7 @@
       });
     });
 
-    return {
-      find: function(tag) {
-        return _metas[tag];
-      },
-      promise: promise
-    };
+    return api;
   });
 
 }).call(this);
