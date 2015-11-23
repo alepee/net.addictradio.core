@@ -86,7 +86,8 @@
     this.getCover = function(id) {
       if (this.getMeta() && this.getMeta().cover) {
         var cover = this.getMeta().cover;
-        return id ? cover.base64(id) : cover.source;
+        var url = id ? cover.base64(id) : cover.source;
+        return url;
       }
     };
 
